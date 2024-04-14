@@ -18,14 +18,18 @@ data = {
 df = pd.DataFrame(data)
 
 # Conditions for flooding
+
+df.loc[(df['water_level_distance'] >= 1) & (df['expected_precipitation'] == 0), 'flood'] = 0
+
 # Condition 1: Water level within 10 cm of the critical threshold and precipitation > 40 mm
-df.loc[(df['water_level_distance'] <= 10) & (df['expected_precipitation'] > 40), 'flood'] = 1
+df.loc[(df['water_level_distance'] <= 10) & (df['expected_precipitation'] > 10), 'flood'] = 1
 
 # Condition 2: Very high turbidity (water opacity > 100 NTU) and high precipitation (> 60 mm)
 df.loc[(df['water_opacity'] > 100) & (df['expected_precipitation'] > 60), 'flood'] = 1
 
 # Condition 3: Moderate water level (within 30 cm of threshold) and very heavy rain (> 80 mm)
 df.loc[(df['water_level_distance'] <= 30) & (df['expected_precipitation'] > 80), 'flood'] = 1
+
 
 # Shuffle the DataFrame to mix up rows with flood and no flood scenarios
 df = df.sample(frac=1).reset_index(drop=True)
